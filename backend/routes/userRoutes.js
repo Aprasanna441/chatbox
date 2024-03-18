@@ -1,19 +1,29 @@
-import { userLogin } from '../controller/userController.js'
 import express from 'express'
-
+import { userLogin, userSignup } from '../controller/userController.js'
 
 const router=express.Router()
 
-//public routes 
-router.get('/login',userLogin)
-
-//middlewares
 
 
 
-//protected routes
+
+
+
+//middleware
+
+
+//public
+router.post('/signup',userSignup)
+router.post('/login',userLogin)
+
+
+
+
+
+
+//protected
+
 
 export default router
-
 
 
