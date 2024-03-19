@@ -142,3 +142,8 @@ export const userLogout=async (req,res)=>{
     console.log("Logout")
 
 }
+
+export const getUsers=async (req,res)=>{
+const users=await userModel.find({_id:{$ne:req.user._id}})
+res.send(users)
+}
