@@ -61,7 +61,7 @@ export const userSignup = [signupValidation,async  (req,res)=> {
                         process.env.JWT_SECRET_KEY,
                         {expiresIn:"5d"})
 
-                        res.status(200).send({status:"Success",message:"User Registered",token:token})
+                        res.status(200).send({status:"Success",token:token,user:newUser})
 
 
 
@@ -109,11 +109,11 @@ export const userLogin = [loginValidation,
                 { userID: user._id },
                 process.env.JWT_SECRET_KEY,
                 { expiresIn: "5d" }
-              );
+              )
               res.status(200).send({
                 token: token,
                 status: "Success",
-                message: "Login Success",
+                user:user
               });
             } else {
               res.send({
@@ -146,5 +146,5 @@ export const userLogout=async (req,res)=>{
 
 export const getUsers=async (req,res)=>{
 const users=await userModel.find({_id:{$ne:req.user._id}})
-res.send(users)
+res.status(200).send({status:"Success",users:users})
 }

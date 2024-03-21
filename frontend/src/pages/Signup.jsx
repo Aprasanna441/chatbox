@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Button } from '@mui/material'
@@ -11,6 +11,7 @@ import { Option } from '@mui/base/Option';
 import isEmail from 'validator/lib/isEmail'
 import isStrongPassword from 'validator/lib/isStrongPassword'
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const gender = [
   {
@@ -42,7 +43,9 @@ const Signup = () => {
   const [passwordError, setPasswordError] = useState("");
   const [confirm_passwordError, setConfirmPasswordError] = useState("");
   const [nameError, setNameError] = useState("");
-
+  const [serverError, setServerError] = useState("");
+  const navigate = useNavigate();
+ 
 
 
   const submitHandler = async (e) => {
@@ -83,7 +86,14 @@ const Signup = () => {
       )
 
       const result = await res.json();
-      console.log(result.token)
+      if (result.status==="Success"){
+        localStorage.setItem("token",result.token)
+        localStorage.setItem("userData",JSON.stringify(result.user))
+        navigate('/home')
+      }
+      else{
+        setServerError(result.message)
+      }
 
     }
 
@@ -91,6 +101,7 @@ const Signup = () => {
 
   }
 
+ 
 
 
 
@@ -105,6 +116,7 @@ const Signup = () => {
       onSubmit={submitHandler}
     >
       <div style={{ color: 'red' }}>
+        {serverError}
         {nameError} 
         {emailError} 
         {passwordError} 

@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField'
 import { Button } from '@mui/material'
 
 import styled from '@emotion/styled';
-
+import { useNavigate } from "react-router-dom";
 import { Select } from '@mui/base/Select';
 import { Option } from '@mui/base/Option';
 
@@ -27,11 +27,13 @@ list-style:none;
 
 
 const Login = () => {
-
+  const navigate = useNavigate();
+const [serverError,setServerError]=useState("")
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirm_passwordError, setConfirmPasswordError] = useState("");
   const [nameError, setNameError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
  
 
 
@@ -57,6 +59,7 @@ const Login = () => {
 
 
     if (! (emailError && nameError && passwordError && confirm_passwordError)){
+      setIsLoading(true);
       const res= await fetch("http://127.0.0.1:5000/api/user/login",{
       method:"POST",
       headers: {
@@ -65,14 +68,26 @@ const Login = () => {
       body:JSON.stringify(actualData)
      }
       )
+      setIsLoading(false);
 
       const result = await res.json();
-      console.log(result.token)
+      console.log(result)
+      if (result.status==="Success"){
+        localStorage.setItem("token",result.token)
+        localStorage.setItem("userData",JSON.stringify(result.user))
+       
+        navigate('/home')
+      }
+      else{
+        setServerError(result.message)
+      }
+      
 
     }
 
 
 
+  
   }
 
 
@@ -88,7 +103,10 @@ const Login = () => {
       autoComplete="off"
       onSubmit={submitHandler}
     >
+
+      {isLoading?"Loading":""}
       <div style={{color:'red'}}>
+        {serverError}
         {nameError} 
       {emailError}
       {passwordError}
