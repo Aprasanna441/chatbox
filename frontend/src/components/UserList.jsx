@@ -34,7 +34,7 @@ const UserList = () => {
 
   useEffect(()=>{
     fetchUsers()
-  },[])
+  },[searchQuery])
 
 const [clickedId,setClickedId]=useState("")
 
@@ -42,7 +42,7 @@ const [clickedId,setClickedId]=useState("")
 
 
   const selectChat=(item)=>{
-    console.log(item._id)
+    
   dispatch(setChatUser(item))
   setClickedId(item._id)
  
@@ -52,12 +52,12 @@ const [clickedId,setClickedId]=useState("")
   return (
 
     <>
-  HI {console.log("Helllo")} hi
+  HI {console.log(searchQuery)} hi
 <div style={{overflowY: 'scroll',height:'70vhz'}}>
   
 {data.map((item,index)=>(
 
-      <Box component="section" className={item._id===redux_id?"bg-primary":"my-container"} sx={{ p: 2,borderBottom:"2px solid red",cursor:'pointer',padding:'2px', }}  onClick={()=>selectChat(item)}>
+      <Box component="section" key={index} className={item._id===redux_id?"bg-primary":"my-container"} sx={{ p: 2,borderBottom:"2px solid red",cursor:'pointer',padding:'2px', }}  onClick={()=>selectChat(item)}>
         <Stack direction="row" spacing={2}>
           
           <Avatar alt="Remy Sharp" src="https://avatar.iran.liara.run/public" />

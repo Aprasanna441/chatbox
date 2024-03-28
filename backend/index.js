@@ -6,13 +6,13 @@ import connectDb from '../backend/config/connectDb.js'
 import chatRoutes from '../backend/routes/chatRoutes.js'
 import userRoutes from '../backend/routes/userRoutes.js'
 import messageRoutes from '../backend/routes/messageRoutes.js'
-
+import {app,server} from './socket/socket.js'
 
 
 const port = process.env.PORT
 const db_url = process.env.DATABASE_URL
 
-const app = express()
+// const app = express()
 app.use(cors())
 app.use(express.json())
 
@@ -31,7 +31,7 @@ app.use("/api/message", messageRoutes)
 
 
 
-app.listen(port, () => {
+server.listen(port, () => {
     connectDb(db_url)
     console.log(`Server running at port ${port}`)
 })

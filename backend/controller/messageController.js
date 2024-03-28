@@ -1,6 +1,7 @@
 import chatModel from '../model/chatModel.js'
 import messageModel from '../model/messageModel.js'
 
+
 export const sendMessage = async (req, res) => {
    try {
       const { message } = req.body
@@ -29,6 +30,11 @@ export const sendMessage = async (req, res) => {
       }
       chat.messages.push(newMessage._id);
       chat.save()
+
+      
+      
+       
+    
        res.status(201).send({ status: "Success", senderId: senderId, receiverId: receiverId })
    }
    catch (Error) {

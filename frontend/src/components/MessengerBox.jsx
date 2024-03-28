@@ -2,9 +2,7 @@ import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
-import Message from './Message';
-import InputLabel from '@mui/material/InputLabel';
-import Input from '@mui/material/Input';
+
 import Tooltip from '@mui/material/Tooltip';
 
 
@@ -16,14 +14,15 @@ import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import { useSelector } from 'react-redux';
 import { useRef } from 'react';
+import {socket} from '../App'
+
 
 
 
 
 
 const MessengerBox = () => {
-
-
+  
   
   const messageRef=useRef(null)
   const scrollRef = useRef(null);
@@ -52,11 +51,19 @@ const MessengerBox = () => {
 
   }
   useEffect(() => {
+    
     if (chatSelected !== "") {
       fetchMessages()
  
     }
+
+  
+
     
+    socket.on('message', (text) => {
+     setData([...messageData,text])
+    });
+
    
     
   }, [chatSelected,messageData])
@@ -68,6 +75,7 @@ const MessengerBox = () => {
   const sendMessage=async (e) => {
     if(e.key==="Enter"){
       e.preventDefault()
+      socket.emit('sendMessage', { text: e.target.value,receiverId:chatSelected._id });
 
       //to the bottom scroll
       
@@ -84,7 +92,7 @@ const MessengerBox = () => {
       body:JSON.stringify({message:e.target.value})
     })
     const result = await res.json()
-    messageRef.current.value("")
+    // messageRef.current.value("")
    if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -124,7 +132,7 @@ const MessengerBox = () => {
 
 
 
-                    <Stack direction="row" spacing={2}>
+                    <Stack key={index} direction="row" spacing={2}>
                                             
                       <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
                      
