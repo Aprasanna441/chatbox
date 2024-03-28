@@ -14,7 +14,7 @@ import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import { useSelector } from 'react-redux';
 import { useRef } from 'react';
-import {socket} from '../App'
+import { socket } from '../App'
 
 
 
@@ -22,9 +22,9 @@ import {socket} from '../App'
 
 
 const MessengerBox = () => {
-  
-  
-  const messageRef=useRef(null)
+
+
+  const messageRef = useRef(null)
   const scrollRef = useRef(null);
   const chatSelected = useSelector((state) => state.chatUserId.value)
 
@@ -42,8 +42,9 @@ const MessengerBox = () => {
       }
     })
     const result = await res.json()
-    
-    
+    console.log(result)
+
+
 
 
     setData(result.data)
@@ -51,59 +52,57 @@ const MessengerBox = () => {
 
   }
   useEffect(() => {
-    
+
     if (chatSelected !== "") {
       fetchMessages()
- 
+
     }
 
-  
 
-    
+
+
     socket.on('message', (text) => {
-     setData([...messageData,text])
+      setData([...messageData, text])
     });
 
-   
-    
-  }, [chatSelected,messageData])
+
+
+  }, [chatSelected, messageData])
 
 
 
 
 
-  const sendMessage=async (e) => {
-    if(e.key==="Enter"){
+  const sendMessage = async (e) => {
+    if (e.key === "Enter") {
       e.preventDefault()
-      socket.emit('sendMessage', { text: e.target.value,receiverId:chatSelected._id });
+      socket.emit('sendMessage', { text: e.target.value, receiverId: chatSelected._id });
 
       //to the bottom scroll
-      
+
+
+
+      const res = await fetch(`http://127.0.0.1:3000/api/message/send/${chatSelected._id}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ message: e.target.value })
+      })
+      const result = await res.json()
+      // messageRef.current.value("")
       if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+
     }
-   
-    const res = await fetch(`http://127.0.0.1:3000/api/message/send/${chatSelected._id}`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        'authorization': `Bearer ${localStorage.getItem("token")}`
-      },
-      body:JSON.stringify({message:e.target.value})
-    })
-    const result = await res.json()
-    // messageRef.current.value("")
-   if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-    
-  }
   }
 
   return (
 
 
-    <Box  className='my-container vh-90' sx={{ position: 'relative', width: '100%' }}>
+    <Box className='my-container vh-90' sx={{ position: 'relative', width: '100%' }}>
       {chatSelected._id ? (
         <div className="container container-fluid p-0" >
 
@@ -127,26 +126,37 @@ const MessengerBox = () => {
 
 
                   {messageData ? messageData.map((item, index) => (
+item.receiverId===chatSelected._id?
+<Stack key={index} direction="row" spacing={2}>
+
+<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+
+<p className="my-container bg-secondary  " style={{ width: '80%', textAlign: "justify", borderRadius:'20px',padding:'4px' }}>{item.message}</p>
+<Tooltip title={item.createdAt}>
+  <p>{item.createdAt.split('T')[1].split(".")[0].slice(0, 5)}</p>
+
+</Tooltip>
+
+
+</Stack>:
+<Stack key={index} direction="row" spacing={2}>
+
+  <p>{item.createdAt.split('T')[1].split(".")[0].slice(0, 5)}</p>
+
+<p className="my-container bg-primary" style={{ width: '80%', textAlign: "justify", borderRadius:'20px',padding:'4px' }}>{item.message}</p>
+<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+<Tooltip title={item.createdAt}>
+
+</Tooltip>
+
+
+</Stack>
 
 
 
 
 
-                    <Stack key={index} direction="row" spacing={2}>
-                                            
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                     
-                      <p className='my-container' style={{ width: '80%', textAlign: "justify" }}>{item.message}</p>
-                      <Tooltip title={item.createdAt}>
-                        <p>{item.createdAt.split('T')[1].split(".")[0].slice(0,5)}</p>
-                     
-                      </Tooltip>
 
-
-                    </Stack>
-
-
-                    
 
                   )) : "Chat is Empty"}
 
@@ -171,14 +181,14 @@ const MessengerBox = () => {
 
 
                 <InputBase
-                 
+
                   sx={{ ml: 1, flex: 1 }}
                   placeholder="Enter message and hit enter"
                   inputProps={{ 'aria-label': 'Enter message and hit enter' }}
                   onKeyDown={sendMessage}
-                 
+
                   name="message"
-                 
+
 
                 />
 
