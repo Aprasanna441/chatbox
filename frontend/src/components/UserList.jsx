@@ -10,13 +10,16 @@ import { setChatUser } from '../store/ChatContext';
 
 
 const UserList = () => {
+  const dispatch=useDispatch()
+ 
  
   const [data,setData]=useState([])
-  const dispatch=useDispatch()
+  const searchQuery=useSelector((state)=>state.searchItem.value)
+
 
   const fetchUsers=async ()=>{
 
-    const res=await  fetch("http://127.0.0.1:5000/api/user/users",{
+    const res=await  fetch("http://127.0.0.1:3000/api/user/users",{
         method:"GET",
         headers:{
             'Content-Type':'application/json',
@@ -49,8 +52,8 @@ const [clickedId,setClickedId]=useState("")
   return (
 
     <>
-  {clickedId}
-<div style={{overflowY: 'scroll',height:'70vh'}}>
+  HI {console.log("Helllo")} hi
+<div style={{overflowY: 'scroll',height:'70vhz'}}>
   
 {data.map((item,index)=>(
 
@@ -67,6 +70,7 @@ const [clickedId,setClickedId]=useState("")
    
       <br />
       <button onClick={()=>localStorage.removeItem("token")} className='btn btn-danger'>Logout</button>
+      {searchQuery}
       </div>
     </>
 

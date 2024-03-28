@@ -15,21 +15,27 @@ import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import { useSelector } from 'react-redux';
-
+import { useRef } from 'react';
 
 
 
 
 
 const MessengerBox = () => {
+
+
+  
+  const messageRef=useRef(null)
+  const scrollRef = useRef(null);
   const chatSelected = useSelector((state) => state.chatUserId.value)
 
 
 
   const [messageData, setData] = useState()
+
   const fetchMessages = async () => {
 
-    const res = await fetch(`http://127.0.0.1:5000/api/message/${chatSelected._id}`, {
+    const res = await fetch(`http://127.0.0.1:3000/api/message/${chatSelected._id}`, {
       method: "GET",
       headers: {
         'Content-Type': 'application/json',
@@ -38,17 +44,22 @@ const MessengerBox = () => {
     })
     const result = await res.json()
     
+    
 
 
     setData(result.data)
-    console.log(messageData)
+
 
   }
   useEffect(() => {
     if (chatSelected !== "") {
       fetchMessages()
+ 
     }
-  }, [chatSelected])
+    
+   
+    
+  }, [chatSelected,messageData])
 
 
 
@@ -56,9 +67,15 @@ const MessengerBox = () => {
 
   const sendMessage=async (e) => {
     if(e.key==="Enter"){
-      console.log(e)
+      e.preventDefault()
+
+      //to the bottom scroll
+      
+      if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
    
-    const res = await fetch(`http://127.0.0.1:5000/api/message/send/${chatSelected._id}`, {
+    const res = await fetch(`http://127.0.0.1:3000/api/message/send/${chatSelected._id}`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -67,16 +84,20 @@ const MessengerBox = () => {
       body:JSON.stringify({message:e.target.value})
     })
     const result = await res.json()
-    console.log(result)
+    messageRef.current.value("")
+   if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+    
   }
   }
 
   return (
 
 
-    <Box className='my-container vh-90' sx={{ position: 'relative', width: '100%' }}>
+    <Box  className='my-container vh-90' sx={{ position: 'relative', width: '100%' }}>
       {chatSelected._id ? (
-        <div className="container container-fluid p-0">
+        <div className="container container-fluid p-0" >
 
           <div className="row  ">
             <div className="col-12">
@@ -92,7 +113,7 @@ const MessengerBox = () => {
 
             <div className="col-12  " >
 
-              <Paper style={{ height: "70vh", overflowY: 'scroll', border: "1px solid red" }}>
+              <Paper style={{ height: "70vh", overflowY: 'scroll', border: "1px solid red" }} ref={scrollRef}>
                 {/* message loop starts     */}
                 <Stack direction="column" spacing={2}>
 
@@ -136,16 +157,20 @@ const MessengerBox = () => {
               <Paper
                 component="form"
                 sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%', position: 'absolute', bottom: -50 }}
+                onSubmit={sendMessage}
               >
 
 
 
                 <InputBase
+                 
                   sx={{ ml: 1, flex: 1 }}
                   placeholder="Enter message and hit enter"
                   inputProps={{ 'aria-label': 'Enter message and hit enter' }}
                   onKeyDown={sendMessage}
+                 
                   name="message"
+                 
 
                 />
 

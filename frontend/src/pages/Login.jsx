@@ -60,7 +60,7 @@ const [serverError,setServerError]=useState("")
 
     if (! (emailError && nameError && passwordError && confirm_passwordError)){
       setIsLoading(true);
-      const res= await fetch("http://127.0.0.1:5000/api/user/login",{
+      const res= await fetch("http://127.0.0.1:3000/api/user/login",{
       method:"POST",
       headers: {
        "Content-Type": "application/json",

@@ -2,12 +2,20 @@ import * as React from 'react';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
+import { useDispatch } from 'react-redux';
 
-
+import setSearchItem from '../store/ChatContext'
 
 
 
 export default function SearchBar() {
+const dispatch=useDispatch()
+
+const setQuery=(item)=>{
+  dispatch(setSearchItem(item))
+
+}
+
   return (
     <Paper
       component="form"
@@ -20,7 +28,7 @@ export default function SearchBar() {
         sx={{ ml: 1, flex: 1, }}
         placeholder="Search User"
         inputProps={{ 'aria-label': 'search user' }}
-        
+        onChange={(item)=>setQuery(item)}
       />
 
 
